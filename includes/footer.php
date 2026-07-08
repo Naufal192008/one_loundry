@@ -1,28 +1,35 @@
+<?php
+// ============================================
+// includes/footer.php - Level 1
+// Penutup HTML + JavaScript inline
+// ============================================
+if (isset($_SESSION['user_id'])):
+?>
             </div><!-- /.content-area -->
         </main><!-- /.main-content -->
     </div><!-- /.app-container -->
+<?php endif; ?>
 
-    <script src="/laundry_lvl1/assets/js/main.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.btn-danger[href*="delete"]').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                    e.preventDefault();
-                }
-            });
-        });
+        console.log('Smart Laundry Ready!');
         setTimeout(function() {
             var msgs = document.querySelectorAll('[style*="background: #D1FAE5"], [style*="background: #FEE2E2"]');
             msgs.forEach(function(msg) {
-                msg.style.transition = 'opacity 0.5s ease';
                 msg.style.opacity = '0';
+                msg.style.transition = 'opacity 0.5s';
                 setTimeout(function() {
                     if (msg.parentNode) msg.remove();
                 }, 500);
             });
         }, 5000);
     });
+    function formatRupiah(a) { 
+        return 'Rp ' + a.toLocaleString('id-ID'); 
+    }
+    function printStruk() { 
+        window.print(); 
+    }
     </script>
 </body>
 </html>
