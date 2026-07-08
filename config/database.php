@@ -4,10 +4,17 @@
 // Koneksi database PDO
 // ============================================
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'smart_laundry_level1');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// ============================================
+// config/database.php - Updated for Railway
+// ============================================
+
+// Mengambil variabel dari Railway jika ada, jika tidak gunakan default lokal
+define('DB_HOST', getenv('MYSQLHOST') ?: '127.0.0.1');
+define('DB_NAME', getenv('MYSQLDATABASE') ?: 'smart_laundry_level1');
+define('DB_USER', getenv('MYSQLUSER') ?: 'root');
+define('DB_PASS', getenv('MYSQLPASSWORD') ?: '');
+
+// ... (sisanya tetap sama)
 
 class Database {
     /** @var string */
