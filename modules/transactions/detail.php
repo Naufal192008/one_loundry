@@ -8,7 +8,7 @@ requireLogin();
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 if (!$id) {
-    redirect('/laundry_lvl1/modules/transactions/', 'ID transaksi tidak valid!', 'error');
+    redirect('/modules/transactions/', 'ID transaksi tidak valid!', 'error');
 }
 
 $outletId = $_SESSION['outlet_id'];
@@ -28,7 +28,7 @@ $stmt->execute([':id' => $id, ':outlet_id' => $outletId]);
 $transaction = $stmt->fetch();
 
 if (!$transaction) {
-    redirect('/laundry_lvl1/modules/transactions/', 'Transaksi tidak ditemukan!', 'error');
+    redirect('/modules/transactions/', 'Transaksi tidak ditemukan!', 'error');
 }
 
 // Update status jika ada POST
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
         
         logTransaction($db, $id, $userId, 'update_status', $oldStatus, $newStatus, 'Status diubah menjadi: ' . $newStatus);
         
-        redirect("/laundry_lvl1/modules/transactions/detail.php?id=$id", 'Status berhasil diperbarui! ✅');
+        redirect("/modules/transactions/detail.php?id=$id", 'Status berhasil diperbarui! ✅');
     }
 }
 
@@ -65,13 +65,13 @@ $jam = date('H:i', strtotime($transaction['created_at']));
 <!-- TOMBOL AKSI -->
 <!-- ============================================ -->
 <div class="no-print" style="margin-bottom: 20px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
-    <a href="/laundry_lvl1/modules/transactions/" class="btn btn-secondary">← Kembali</a>
+    <a href="/modules/transactions/" class="btn btn-secondary">← Kembali</a>
     <button onclick="printStruk()" class="btn btn-primary">🖨️ Cetak Struk</button>
-    <a href="/laundry_lvl1/modules/transactions/edit.php?id=<?= $id ?>" class="btn btn-secondary">✏️ Edit</a>
+    <a href="/modules/transactions/edit.php?id=<?= $id ?>" class="btn btn-secondary">✏️ Edit</a>
     
     <!-- HAPUS - HANYA OWNER -->
     <?php if (isOwner()): ?>
-    <a href="/laundry_lvl1/modules/transactions/delete.php?id=<?= $id ?>" 
+    <a href="/modules/transactions/delete.php?id=<?= $id ?>" 
        class="btn btn-sm" 
        style="background:#EF4444;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;"
        onclick="return confirm('Yakin hapus transaksi ini?')">
@@ -203,7 +203,7 @@ $jam = date('H:i', strtotime($transaction['created_at']));
         <div class="struk-qr">
             <div class="struk-divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
             <p style="text-align: center; font-size: 11px; margin-bottom: 8px;">Scan untuk lacak cucian:</p>
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<?= urlencode('http://' . $_SERVER['HTTP_HOST'] . '/laundry_lvl1/qr/track.php?token=' . $transaction['qr_code_token']) ?>" 
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<?= urlencode('http://' . $_SERVER['HTTP_HOST'] . '/qr/track.php?token=' . $transaction['qr_code_token']) ?>" 
                  alt="QR Code" 
                  style="display: block; margin: 0 auto; width: 120px; height: 120px;">
         </div>

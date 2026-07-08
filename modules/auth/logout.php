@@ -5,6 +5,6 @@
 // ============================================
 session_start();
 session_destroy();
-header('Location: /laundry_lvl1/modules/auth/login.php');
+header('Location: /modules/auth/login.php');
 exit();
 ?>

@@ -30,7 +30,7 @@ if (strpos($_SERVER['REQUEST_URI'] ?? '', '/transactions') !== false) {
     <title>Smart Laundry - <?= $pageTitle ?></title>
     
     <!-- CSS Utama -->
-    <link rel="stylesheet" href="/laundry_lvl1/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">

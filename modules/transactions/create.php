@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 $db->commit();
                 
-                redirect("/laundry_lvl1/modules/transactions/detail.php?id=$transactionId", '✅ Transaksi berhasil dibuat! Silakan cetak struk.');
+                redirect("/modules/transactions/detail.php?id=$transactionId", '✅ Transaksi berhasil dibuat! Silakan cetak struk.');
             } catch (Exception $e) {
                 $db->rollBack();
                 $error = 'Gagal membuat transaksi: ' . $e->getMessage();
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="card" style="max-width: 650px; margin: 0 auto;">
     <div class="card-header">
         <h3>🆕 Transaksi Baru</h3>
-        <a href="/laundry_lvl1/modules/transactions/" class="btn btn-secondary btn-sm">← Kembali</a>
+        <a href="/modules/transactions/" class="btn btn-secondary btn-sm">← Kembali</a>
     </div>
     <div class="card-body">
         <?php if ($error): ?>

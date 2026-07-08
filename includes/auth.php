@@ -18,13 +18,11 @@ function isLoggedIn() {
  */
 function requireLogin() {
     if (!isLoggedIn()) {
-        // Cek apakah headers sudah terkirim
         if (!headers_sent()) {
-            header('Location: /laundry_lvl1/modules/auth/login.php');
+            header('Location: /modules/auth/login.php');
             exit();
         } else {
-            // Fallback: gunakan JavaScript redirect
-            echo '<script>window.location.href="/laundry_lvl1/modules/auth/login.php";</script>';
+            echo '<script>window.location.href="/modules/auth/login.php";</script>';
             exit();
         }
     }

@@ -21,7 +21,7 @@ $transactions = $stmt->fetchAll();
 <div class="card">
     <div class="card-header">
         <h3>🧾 Daftar Transaksi</h3>
-        <a href="/laundry_lvl1/modules/transactions/create.php" class="btn btn-primary">+ Transaksi Baru</a>
+        <a href="/modules/transactions/create.php" class="btn btn-primary">+ Transaksi Baru</a>
     </div>
     <div class="card-body">
         <div class="table-container">
@@ -42,7 +42,7 @@ $transactions = $stmt->fetchAll();
                     <?php if (empty($transactions)): ?>
                     <tr>
                         <td colspan="8" style="text-align: center; padding: 40px; color: #64748B;">
-                            📭 Belum ada transaksi. <a href="/laundry_lvl1/modules/transactions/create.php">Buat transaksi pertama!</a>
+                            📭 Belum ada transaksi. <a href="/modules/transactions/create.php">Buat transaksi pertama!</a>
                         </td>
                     </tr>
                     <?php else: ?>
@@ -69,10 +69,10 @@ $transactions = $stmt->fetchAll();
                         </td>
                         <td><?= date('d/m/Y H:i', strtotime($trx['created_at'])) ?></td>
                         <td style="display: flex; gap: 4px;">
-                            <a href="/laundry_lvl1/modules/transactions/detail.php?id=<?= $trx['id'] ?>" class="btn btn-sm btn-secondary">Detail</a>
-                            <a href="/laundry_lvl1/modules/transactions/edit.php?id=<?= $trx['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
+                            <a href="/modules/transactions/detail.php?id=<?= $trx['id'] ?>" class="btn btn-sm btn-secondary">Detail</a>
+                            <a href="/modules/transactions/edit.php?id=<?= $trx['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
                             <?php if (isOwner()): ?>
-                            <a href="/laundry_lvl1/modules/transactions/delete.php?id=<?= $trx['id'] ?>" 
+                            <a href="/modules/transactions/delete.php?id=<?= $trx['id'] ?>" 
                                class="btn btn-sm" 
                                style="background:#EF4444;color:white;"
                                onclick="return confirm('Yakin hapus transaksi ini?')">Hapus</a>

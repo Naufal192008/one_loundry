@@ -26,7 +26,7 @@ $customers = $stmt->fetchAll();
 <div class="card">
     <div class="card-header">
         <h3>👥 Daftar Pelanggan</h3>
-        <a href="/laundry_lvl1/modules/customers/create.php" class="btn btn-primary">+ Pelanggan Baru</a>
+        <a href="/modules/customers/create.php" class="btn btn-primary">+ Pelanggan Baru</a>
     </div>
     <div class="card-body">
         <div class="search-bar">
@@ -67,7 +67,7 @@ $customers = $stmt->fetchAll();
                         </td>
                         <td><?= date('d/m/Y', strtotime($cust['created_at'])) ?></td>
                         <td>
-                            <a href="/laundry_lvl1/modules/customers/edit.php?id=<?= $cust['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
+                            <a href="/modules/customers/edit.php?id=<?= $cust['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
                         </td>
                     </tr>
                     <?php endforeach; ?>

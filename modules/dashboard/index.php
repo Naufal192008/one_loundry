@@ -102,15 +102,15 @@ foreach ($stmt->fetchAll() as $row) {
     </div>
     <div class="card-body">
         <div class="quick-actions">
-            <a href="/laundry_lvl1/modules/transactions/" class="quick-action-btn">
+            <a href="/modules/transactions/" class="quick-action-btn">
                 <span class="icon">🧾</span>
                 <span>Transaksi Baru</span>
             </a>
-            <a href="/laundry_lvl1/modules/transactions/" class="quick-action-btn">
+            <a href="/modules/transactions/" class="quick-action-btn">
                 <span class="icon">📋</span>
                 <span>Lihat Transaksi</span>
             </a>
-            <a href="/laundry_lvl1/modules/customers/" class="quick-action-btn">
+            <a href="/modules/customers/" class="quick-action-btn">
                 <span class="icon">👥</span>
                 <span>Pelanggan</span>
             </a>
