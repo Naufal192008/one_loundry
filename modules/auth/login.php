@@ -2,9 +2,9 @@
 session_start();
 require_once __DIR__ . '/../../config/database.php';
 
-// Jika sudah login, redirect ke dashboard
+// Jika sudah login, arahkan langsung ke /modules/dashboard/ (Hapus /laundry_lvl1/)
 if (isset($_SESSION['user_id'])) {
-    header('Location: /laundry_lvl1/modules/dashboard/');
+    header('Location: /modules/dashboard/');
     exit();
 }
 
@@ -25,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch();
         
         if ($user && password_verify($password, $user['password'])) {
-            // Jika kasir, verifikasi PIN
             if ($user['role'] === 'cashier') {
                 $pin = $_POST['pin'] ?? '';
                 if ($pin !== $user['pin']) {
@@ -39,7 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['role'] = $user['role'];
             $_SESSION['outlet_id'] = $user['outlet_id'];
             
-            header('Location: /laundry_lvl1/modules/dashboard/');
+            // Arahkan ke /modules/dashboard/ tanpa /laundry_lvl1/
+            header('Location: /modules/dashboard/');
             exit();
         } else {
             $error = 'Username atau password salah!';
@@ -54,7 +54,7 @@ render:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Smart Laundry</title>
-<link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
