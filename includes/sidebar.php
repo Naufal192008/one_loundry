@@ -7,7 +7,6 @@
 <aside class="sidebar">
     <div class="sidebar-header">
         <h1>🧺 Smart Laundry</h1>
-        <span class="badge">Level 1</span>
     </div>
     <nav class="sidebar-nav">
         <a href="/laundry_lvl1/modules/dashboard/" class="nav-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/dashboard') !== false ? 'active' : '' ?>">

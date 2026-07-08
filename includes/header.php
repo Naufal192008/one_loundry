@@ -11,13 +11,23 @@ require_once __DIR__ . '/functions.php';
 $database = new Database();
 $db = $database->getConnection();
 $currentUser = getCurrentUser($db);
+
+// Tentukan judul halaman berdasarkan URL
+$pageTitle = 'Dashboard';
+if (strpos($_SERVER['REQUEST_URI'] ?? '', '/transactions') !== false) {
+    $pageTitle = 'Transaksi';
+} elseif (strpos($_SERVER['REQUEST_URI'] ?? '', '/customers') !== false) {
+    $pageTitle = 'Pelanggan';
+} elseif (strpos($_SERVER['REQUEST_URI'] ?? '', '/reports') !== false) {
+    $pageTitle = 'Laporan';
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Laundry - Level 1</title>
+    <title>Smart Laundry - <?= $pageTitle ?></title>
     
     <!-- CSS Utama -->
     <link rel="stylesheet" href="/laundry_lvl1/assets/css/style.css">
@@ -26,9 +36,6 @@ $currentUser = getCurrentUser($db);
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* ============================================ */
-        /* FALLBACK CSS - Kalau style.css gagal load    */
-        /* ============================================ */
         :root {
             --primary: #1D4ED8;
             --primary-light: #3B82F6;
@@ -55,11 +62,9 @@ $currentUser = getCurrentUser($db);
             --white: #FFFFFF;
             --radius: 8px;
             --radius-lg: 12px;
-            --radius-xl: 16px;
             --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
             --shadow: 0 1px 3px rgba(0,0,0,0.1);
             --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
-            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -72,10 +77,8 @@ $currentUser = getCurrentUser($db);
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Layout */
         .app-container { display: flex; min-height: 100vh; }
 
-        /* Sidebar */
         .sidebar {
             width: 260px;
             background: white;
@@ -101,15 +104,6 @@ $currentUser = getCurrentUser($db);
             font-weight: 700;
             color: #0F172A;
             white-space: nowrap;
-        }
-
-        .badge {
-            background: #EFF6FF;
-            color: #1D4ED8;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 3px 10px;
-            border-radius: 20px;
         }
 
         .sidebar-nav {
@@ -180,7 +174,6 @@ $currentUser = getCurrentUser($db);
             color: #EF4444;
         }
 
-        /* Main Content */
         .main-content {
             flex: 1;
             margin-left: 260px;
@@ -248,7 +241,6 @@ $currentUser = getCurrentUser($db);
             padding: 24px 32px;
         }
 
-        /* Cards */
         .card {
             background: white;
             border-radius: 12px;
@@ -275,7 +267,6 @@ $currentUser = getCurrentUser($db);
             padding: 24px;
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -329,7 +320,6 @@ $currentUser = getCurrentUser($db);
             color: #0F172A;
         }
 
-        /* Kanban Board */
         .kanban-board {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -366,7 +356,6 @@ $currentUser = getCurrentUser($db);
             font-weight: 600;
         }
 
-        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -412,7 +401,6 @@ $currentUser = getCurrentUser($db);
             font-size: 16px;
         }
 
-        /* Tables */
         .table-container {
             overflow-x: auto;
             border-radius: 8px;
@@ -452,7 +440,6 @@ $currentUser = getCurrentUser($db);
             background: #F8FAFC;
         }
 
-        /* Status Badge */
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -464,7 +451,6 @@ $currentUser = getCurrentUser($db);
             white-space: nowrap;
         }
 
-        /* Quick Actions */
         .quick-actions {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -502,7 +488,6 @@ $currentUser = getCurrentUser($db);
             font-size: 32px;
         }
 
-        /* Search Bar */
         .search-bar {
             display: flex;
             gap: 12px;
@@ -526,7 +511,6 @@ $currentUser = getCurrentUser($db);
             box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
         }
 
-        /* Form */
         .form-group {
             margin-bottom: 20px;
         }
@@ -563,7 +547,6 @@ $currentUser = getCurrentUser($db);
             gap: 20px;
         }
 
-        /* Invoice */
         .invoice-container {
             background: white;
             border-radius: 12px;
@@ -613,12 +596,11 @@ $currentUser = getCurrentUser($db);
             height: 160px;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
                 width: 72px;
             }
-            .sidebar-header h1, .badge, .nav-item span:not(.nav-icon), 
+            .sidebar-header h1, .nav-item span:not(.nav-icon), 
             .btn-logout span:last-child {
                 display: none;
             }
@@ -643,7 +625,6 @@ $currentUser = getCurrentUser($db);
             body { background: white; }
         }
 
-        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -662,7 +643,7 @@ $currentUser = getCurrentUser($db);
         <main class="main-content">
             <header class="top-bar">
                 <div class="top-bar-left">
-                    <h2>Dashboard</h2>
+                    <h2><?= $pageTitle ?></h2>
                 </div>
                 <div class="top-bar-right">
                     <span class="user-info">

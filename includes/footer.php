@@ -1,7 +1,7 @@
             </div><!-- /.content-area -->
         </main><!-- /.main-content -->
     </div><!-- /.app-container -->
-    
+
     <script src="/laundry_lvl1/assets/js/main.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
