@@ -1,11 +1,3 @@
-/**
- * Smart Laundry Level 1 - Main JavaScript
- * Fungsi: Interaksi UI, animasi, validasi form, dll
- */
-
-// ============================================
-// INITIALIZATION
-// ============================================
 document.addEventListener('DOMContentLoaded', function() {
     initTooltips();
     initAutoHideAlert();
