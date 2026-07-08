@@ -1,46 +1,31 @@
 <?php
 // ============================================
-// config/database.php - Level 1
-// Koneksi database PDO
+// config/database.php - Final Optimized
 // ============================================
 
-// ============================================
-// config/database.php - Updated for Railway
-// ============================================
-
-// Mengambil variabel dari Railway jika ada, jika tidak gunakan default lokal
+// Mengambil variabel dari Railway dengan pengecekan ganda
 define('DB_HOST', getenv('MYSQLHOST') ?: '127.0.0.1');
-define('DB_NAME', getenv('MYSQLDATABASE') ?: 'smart_laundry_level1');
+define('DB_PORT', getenv('MYSQLPORT') ?: '3306');
+define('DB_NAME', getenv('MYSQLDATABASE') ?: getenv('MYSQL_DATABASE') ?: 'smart_laundry_level1');
 define('DB_USER', getenv('MYSQLUSER') ?: 'root');
-define('DB_PASS', getenv('MYSQLPASSWORD') ?: '');
-
-// ... (sisanya tetap sama)
+define('DB_PASS', getenv('MYSQLPASSWORD') ?: getenv('MYSQL_ROOT_PASSWORD') ?: '');
 
 class Database {
-    /** @var string */
     private $host = DB_HOST;
-    
-    /** @var string */
+    private $port = DB_PORT;
     private $db_name = DB_NAME;
-    
-    /** @var string */
     private $username = DB_USER;
-    
-    /** @var string */
     private $password = DB_PASS;
-    
-    /** @var PDO|null */
     private $conn = null;
 
-    /**
-     * Get database connection
-     * @return PDO
-     */
     public function getConnection() {
         $this->conn = null;
         try {
+            // Menyertakan port di dalam DSN agar koneksi ke Railway berhasil
+            $dsn = "mysql:host=" . $this->host . ";port=" . $this->port . ";dbname=" . $this->db_name . ";charset=utf8mb4";
+            
             $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->db_name . ";charset=utf8mb4",
+                $dsn,
                 $this->username,
                 $this->password,
                 [
@@ -50,6 +35,7 @@ class Database {
                 ]
             );
         } catch(PDOException $e) {
+            // Menampilkan pesan error yang membantu untuk debugging
             die("Koneksi database gagal: " . $e->getMessage());
         }
         return $this->conn;
