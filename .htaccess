@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Redirect root ke login
+RewriteRule ^$ /modules/auth/login.php [L,R=302]
+
+# Allow direct access to existing files
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Route everything else
+RewriteRule ^(.*)$ index.php [QSA,L]
