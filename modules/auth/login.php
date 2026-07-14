@@ -1,30 +1,49 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../config/database.php';
-require_once __DIR__ . '/../../config/constants.php';
+require_once __DIR__ . '/../../includes/auth.php';
 
-if (isset($_SESSION['user_id'])) {
-    header('Location: /laundry_lvl1/modules/dashboard/');
+if (isLoggedIn()) {
+    header('Location: /modules/dashboard/');
     exit();
 }
 
 $error = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
-    if (empty($username) || empty($password)) { $error = 'Username dan password wajib diisi!'; }
-    else {
-        $database = new Database(); $db = $database->getConnection();
+    
+    if (empty($username) || empty($password)) {
+        $error = 'Username dan password wajib diisi!';
+    } else {
+        $database = new Database();
+        $db = $database->getConnection();
+        
         $stmt = $db->prepare("SELECT * FROM users WHERE (username = ? OR email = ?) AND is_active = 1 LIMIT 1");
-        $stmt->execute([$username, $username]); $user = $stmt->fetch();
+        $stmt->execute([$username, $username]);
+        $user = $stmt->fetch();
+        
         if ($user && password_verify($password, $user['password'])) {
-            if ($user['role'] === 'cashier') { $pin = $_POST['pin'] ?? ''; if ($pin !== $user['pin']) { $error = 'PIN kasir tidak valid!'; goto render; } }
-            $_SESSION['user_id'] = $user['id']; $_SESSION['username'] = $user['username']; $_SESSION['role'] = $user['role'];
-            $_SESSION['franchise_id'] = $user['franchise_id']; $_SESSION['outlet_id'] = $user['outlet_id'];
+            if ($user['role'] === 'cashier') {
+                $pin = $_POST['pin'] ?? '';
+                if ($pin !== $user['pin']) {
+                    $error = 'PIN kasir tidak valid!';
+                    goto render;
+                }
+            }
+            
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['role'] = $user['role'];
+            $_SESSION['franchise_id'] = $user['franchise_id'] ?? 1;
+            $_SESSION['outlet_id'] = $user['outlet_id'] ?? 1;
             $_SESSION['theme'] = $user['theme'] ?? 'light';
-            $stmt = $db->prepare("UPDATE users SET last_login = NOW() WHERE id = ?"); $stmt->execute([$user['id']]);
-            header('Location: /laundry_lvl1/modules/dashboard/'); exit;
-        } else { $error = 'Username atau password salah!'; }
+            
+            header('Location: /modules/dashboard/');
+            exit();
+        } else {
+            $error = 'Username atau password salah!';
+        }
     }
 }
 render:

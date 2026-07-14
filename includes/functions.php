@@ -1,4 +1,8 @@
 <?php
+// ============================================
+// includes/functions.php
+// ============================================
+
 function formatRupiah(float $amount): string {
     return 'Rp ' . number_format($amount, 0, ',', '.');
 }
@@ -24,10 +28,17 @@ function getStatusInfo(string $status): array {
 }
 
 function redirect(string $url, ?string $message = null, string $type = 'success'): void {
-    if ($message) { $_SESSION['flash_message'] = $message; $_SESSION['flash_type'] = $type; }
-    if (!headers_sent()) { header("Location: $url"); exit; }
-    echo '<script>window.location.href="' . addslashes($url) . '"</script>';
-    exit;
+    if ($message) {
+        $_SESSION['flash_message'] = $message;
+        $_SESSION['flash_type'] = $type;
+    }
+    if (!headers_sent()) {
+        header("Location: $url");
+        exit();
+    } else {
+        echo '<script>window.location.href="' . addslashes($url) . '";</script>';
+        exit();
+    }
 }
 
 function showFlashMessage(): void {
@@ -36,7 +47,7 @@ function showFlashMessage(): void {
     $bg = $type === 'success' ? '#D1FAE5' : '#FEE2E2';
     $color = $type === 'success' ? '#065F46' : '#991B1B';
     $icon = $type === 'success' ? '✅' : '❌';
-    echo "<div style='background:{$bg};color:{$color};padding:12px 16px;border-radius:8px;margin-bottom:16px;border-left:4px solid {$color};animation:slideDown 0.3s ease;'>{$icon} " . htmlspecialchars($_SESSION['flash_message']) . "</div>";
+    echo '<div style="background:' . $bg . ';color:' . $color . ';padding:12px 16px;border-radius:8px;margin-bottom:16px;border-left:4px solid ' . $color . ';animation:slideDown 0.3s ease;">' . $icon . ' ' . htmlspecialchars($_SESSION['flash_message']) . '</div>';
     unset($_SESSION['flash_message'], $_SESSION['flash_type']);
 }
 
@@ -53,9 +64,13 @@ function pointsToRupiah(int $points): int {
 }
 
 function getCustomerPoints(PDO $db, int $customerId): int {
-    $stmt = $db->prepare("SELECT loyalty_points FROM customers WHERE id = ?");
-    $stmt->execute([$customerId]);
-    return (int)($stmt->fetch()['loyalty_points'] ?? 0);
+    try {
+        $stmt = $db->prepare("SELECT loyalty_points FROM customers WHERE id = ?");
+        $stmt->execute([$customerId]);
+        return (int)($stmt->fetch()['loyalty_points'] ?? 0);
+    } catch (Exception $e) {
+        return 0;
+    }
 }
 
 function formatPhoneWA(string $phone): string {
@@ -66,30 +81,37 @@ function formatPhoneWA(string $phone): string {
 }
 
 function sendWhatsApp(string $phone, string $message): array {
+    if (empty(WHATSAPP_TOKEN)) {
+        return ['success' => false, 'error' => 'WhatsApp token not configured'];
+    }
+    
     $phone = formatPhoneWA($phone);
+    
     $ch = curl_init(WHATSAPP_API_URL);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => ['target' => $phone, 'message' => $message, 'countryCode' => '62'],
         CURLOPT_HTTPHEADER => ['Authorization: ' . WHATSAPP_TOKEN],
-        CURLOPT_TIMEOUT => 30,
+        CURLOPT_TIMEOUT => 15,
     ]);
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-    return ['success' => $httpCode === 200, 'response' => $response];
+    
+    return ['success' => $httpCode === 200, 'http_code' => $httpCode, 'response' => $response];
 }
 
 function getTrackingUrl(string $token): string {
     $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    return $protocol . $host . '/laundry_lvl1/qr/track.php?token=' . $token;
+    return $protocol . $host . '/qr/track.php?token=' . $token;
 }
 
 function apiResponse(int $code, $data): void {
     http_response_code($code);
     header('Content-Type: application/json');
     echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    exit;
+    exit();
 }
+?>

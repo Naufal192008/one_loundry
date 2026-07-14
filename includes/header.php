@@ -1,4 +1,8 @@
 <?php
+// ============================================
+// includes/header.php
+// ============================================
+
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/constants.php';
 require_once __DIR__ . '/auth.php';
@@ -28,12 +32,8 @@ $theme = $currentUser['theme'] ?? 'light';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#6366F1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="manifest" href="/laundry_lvl1/assets/pwa/manifest.json">
     <title><?= APP_NAME ?> - <?= $pageTitle ?></title>
-    <link rel="stylesheet" href="/assets/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         :root {
             --primary: #6366F1; --primary-light: #818CF8; --primary-dark: #4F46E5; --primary-bg: #EEF2FF;
@@ -75,16 +75,16 @@ $theme = $currentUser['theme'] ?? 'light';
         .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-bottom:24px}
         .stat-card{background:var(--white);border-radius:var(--radius-lg);padding:24px;border:1px solid var(--gray-200);box-shadow:var(--shadow);transition:all 0.3s;cursor:pointer;position:relative;overflow:hidden}
         .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
-        .stat-card.primary::before{background:var(--primary)}
-        .stat-card.success::before{background:var(--success)}
-        .stat-card.warning::before{background:var(--warning)}
+        .stat-card.primary::before{background:var(--primary)}.stat-card.success::before{background:var(--success)}
+        .stat-card.warning::before{background:var(--warning)}.stat-card.danger::before{background:var(--danger)}
         .stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
         .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:var(--radius-sm);font-weight:600;font-size:14px;cursor:pointer;border:none;text-decoration:none;transition:all 0.2s;font-family:var(--font)}
-        .btn-primary{background:var(--primary);color:white}.btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px)}
+        .btn-primary{background:var(--primary);color:white}.btn-primary:hover{background:var(--primary-dark)}
         .btn-secondary{background:var(--gray-100);color:var(--gray-700)}.btn-danger{background:var(--danger);color:white}
         .btn-sm{padding:6px 12px;font-size:12px}.btn-lg{padding:14px 28px;font-size:16px}
         .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
-        .badge-success{background:#D1FAE5;color:#065F46}.badge-warning{background:#FEF3C7;color:#92400E}.badge-danger{background:#FEE2E2;color:#991B1B}.badge-info{background:#DBEAFE;color:#1E40AF}
+        .badge-success{background:#D1FAE5;color:#065F46}.badge-warning{background:#FEF3C7;color:#92400E}
+        .badge-danger{background:#FEE2E2;color:#991B1B}.badge-info{background:#DBEAFE;color:#1E40AF}
         .table-container{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--gray-200)}
         table{width:100%;border-collapse:collapse;background:var(--white)}
         thead{background:var(--gray-50);border-bottom:2px solid var(--gray-200)}
@@ -98,13 +98,11 @@ $theme = $currentUser['theme'] ?? 'light';
         .form-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
         .quick-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
         .quick-action-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:var(--white);border:2px solid var(--gray-200);border-radius:var(--radius-lg);cursor:pointer;text-decoration:none;font-weight:600;font-size:14px;color:var(--gray-700);transition:all 0.2s}
-        .quick-action-btn:hover{border-color:var(--primary);background:var(--primary-bg);color:var(--primary);transform:translateY(-2px)}
-        .quick-action-btn .icon{font-size:32px}
-        @media(max-width:1024px){.sidebar{width:80px}.sidebar-brand,.nav-item span:not(.nav-icon),.nav-section,.nav-badge{display:none}.nav-item{justify-content:center;padding:12px}.main-content{margin-left:80px}}
+        .quick-action-btn:hover{border-color:var(--primary);background:var(--primary-bg);color:var(--primary);transform:translateY(-2px)}.quick-action-btn .icon{font-size:32px}
+        @media(max-width:1024px){.sidebar{width:80px}.sidebar-brand,.nav-item span:not(.nav-icon),.nav-section{display:none}.nav-item{justify-content:center;padding:12px}.main-content{margin-left:80px}}
         @media(max-width:768px){.content-area{padding:16px}.stats-grid{grid-template-columns:1fr 1fr}.top-bar{padding:12px 16px}}
         @media(max-width:480px){.stats-grid{grid-template-columns:1fr}.sidebar{width:0;transform:translateX(-100%)}.sidebar.open{width:280px;transform:translateX(0)}.main-content{margin-left:0}}
         @keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
     </style>
 </head>
 <body>
@@ -115,7 +113,7 @@ $theme = $currentUser['theme'] ?? 'light';
             <header class="top-bar">
                 <h1><?= $pageTitle ?></h1>
                 <div style="display:flex;align-items:center;gap:16px;">
-                    <button onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;font-size:20px;" title="Toggle Theme">🌓</button>
+                    <button onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;font-size:20px;">🌓</button>
                     <div style="display:flex;align-items:center;gap:12px;padding:8px 16px;background:var(--gray-50);border-radius:var(--radius);">
                         <div style="width:40px;height:40px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;"><?= strtoupper(substr($currentUser['name'] ?? 'U', 0, 1)) ?></div>
                         <div><strong><?= htmlspecialchars($currentUser['name'] ?? 'User') ?></strong><br><small style="color:var(--primary);"><?= ucfirst(str_replace('_', ' ', $currentUser['role'] ?? '')) ?></small></div>

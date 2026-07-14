@@ -1,119 +1,59 @@
 <?php
-// ============================================
-// modules/dashboard/index.php - Level 1
-// Halaman Dashboard
-// ============================================
 require_once __DIR__ . '/../../includes/header.php';
 requireLogin();
 
-$outletId = $_SESSION['outlet_id'];
+$franchiseId = $_SESSION['franchise_id'] ?? 1;
 $today = date('Y-m-d');
 
-// Statistik hari ini
-$stmt = $db->prepare("SELECT 
-    COUNT(*) as total_transactions,
-    COALESCE(SUM(total_price), 0) as total_revenue,
-    COALESCE(SUM(CASE WHEN payment_status = 'paid' THEN total_price ELSE 0 END), 0) as paid_revenue
-    FROM transactions 
-    WHERE outlet_id = :outlet_id AND DATE(created_at) = :today");
-$stmt->execute([':outlet_id' => $outletId, ':today' => $today]);
+// Stats
+$stmt = $db->prepare("SELECT COUNT(*) as total, COALESCE(SUM(total_price),0) as revenue FROM transactions WHERE franchise_id = ? AND DATE(created_at) = ?");
+$stmt->execute([$franchiseId, $today]);
 $todayStats = $stmt->fetch();
 
-// Jumlah per status
-$stmt = $db->prepare("SELECT laundry_status, COUNT(*) as count 
-    FROM transactions 
-    WHERE outlet_id = :outlet_id AND DATE(created_at) = :today 
-    GROUP BY laundry_status");
-$stmt->execute([':outlet_id' => $outletId, ':today' => $today]);
+$stmt = $db->prepare("SELECT laundry_status, COUNT(*) as count FROM transactions WHERE franchise_id = ? AND DATE(created_at) = ? GROUP BY laundry_status");
+$stmt->execute([$franchiseId, $today]);
 $statusCounts = [];
-foreach ($stmt->fetchAll() as $row) {
-    $statusCounts[$row['laundry_status']] = $row['count'];
-}
+foreach ($stmt->fetchAll() as $row) $statusCounts[$row['laundry_status']] = $row['count'];
+
+$stmt = $db->prepare("SELECT COUNT(*) as total FROM customers WHERE franchise_id = ?");
+$stmt->execute([$franchiseId]);
+$custTotal = $stmt->fetch()['total'];
 ?>
 
 <div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-icon blue">💰</div>
-        <div class="stat-info">
-            <h4>Pendapatan Hari Ini</h4>
-            <div class="stat-value"><?= formatRupiah($todayStats['total_revenue']) ?></div>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon green">✅</div>
-        <div class="stat-info">
-            <h4>Sudah Dibayar</h4>
-            <div class="stat-value"><?= formatRupiah($todayStats['paid_revenue']) ?></div>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon yellow">📋</div>
-        <div class="stat-info">
-            <h4>Total Transaksi</h4>
-            <div class="stat-value"><?= $todayStats['total_transactions'] ?></div>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon purple">🔄</div>
-        <div class="stat-info">
-            <h4>Sedang Diproses</h4>
-            <div class="stat-value"><?= ($statusCounts['washing'] ?? 0) + ($statusCounts['ironing'] ?? 0) ?></div>
-        </div>
-    </div>
+    <div class="stat-card primary"><div style="display:flex;align-items:center;gap:16px;"><div style="font-size:32px;">💰</div><div><div style="font-size:13px;color:var(--gray-500);">Pendapatan Hari Ini</div><div style="font-size:28px;font-weight:800;"><?= formatRupiah($todayStats['revenue']) ?></div></div></div></div>
+    <div class="stat-card success"><div style="display:flex;align-items:center;gap:16px;"><div style="font-size:32px;">📋</div><div><div style="font-size:13px;color:var(--gray-500);">Total Transaksi</div><div style="font-size:28px;font-weight:800;"><?= $todayStats['total'] ?></div></div></div></div>
+    <div class="stat-card warning"><div style="display:flex;align-items:center;gap:16px;"><div style="font-size:32px;">🔄</div><div><div style="font-size:13px;color:var(--gray-500);">Sedang Diproses</div><div style="font-size:28px;font-weight:800;"><?= ($statusCounts['washing']??0)+($statusCounts['ironing']??0) ?></div></div></div></div>
+    <div class="stat-card"><div style="display:flex;align-items:center;gap:16px;"><div style="font-size:32px;">👥</div><div><div style="font-size:13px;color:var(--gray-500);">Total Pelanggan</div><div style="font-size:28px;font-weight:800;"><?= $custTotal ?></div></div></div></div>
 </div>
 
 <div class="card">
-    <div class="card-header">
-        <h3>📊 Status Cucian Hari Ini</h3>
-    </div>
+    <div class="card-header"><div class="card-title">📊 Status Cucian Hari Ini</div></div>
     <div class="card-body">
-        <div class="kanban-board">
-            <div class="kanban-column" style="background: #FEF3C7;">
-                <div class="kanban-column-header">
-                    <h4>🟡 Menunggu</h4>
-                    <span class="kanban-count"><?= $statusCounts['queue'] ?? 0 ?></span>
-                </div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;text-align:center;">
+            <?php
+            $statuses = ['queue'=>['label'=>'Menunggu','icon'=>'📋','color'=>'#F59E0B'],'washing'=>['label'=>'Dicuci','icon'=>'🫧','color'=>'#3B82F6'],'ironing'=>['label'=>'Disetrika','icon'=>'👕','color'=>'#8B5CF6'],'ready'=>['label'=>'Siap','icon'=>'✨','color'=>'#10B981'],'completed'=>['label'=>'Selesai','icon'=>'✅','color'=>'#6B7280']];
+            foreach($statuses as $k=>$s): ?>
+            <div style="background:<?=$s['color']?>15;padding:20px;border-radius:12px;border:2px solid <?=$s['color']?>30;">
+                <div style="font-size:32px;"><?=$s['icon']?></div>
+                <div style="font-size:24px;font-weight:800;color:<?=$s['color']?>;"><?=$statusCounts[$k]??0?></div>
+                <div style="font-size:12px;color:var(--gray-500);"><?=$s['label']?></div>
             </div>
-            <div class="kanban-column" style="background: #DBEAFE;">
-                <div class="kanban-column-header">
-                    <h4>🔵 Diproses</h4>
-                    <span class="kanban-count"><?= ($statusCounts['washing'] ?? 0) + ($statusCounts['ironing'] ?? 0) ?></span>
-                </div>
-            </div>
-            <div class="kanban-column" style="background: #D1FAE5;">
-                <div class="kanban-column-header">
-                    <h4>🟢 Siap Diambil</h4>
-                    <span class="kanban-count"><?= $statusCounts['ready'] ?? 0 ?></span>
-                </div>
-            </div>
-            <div class="kanban-column">
-                <div class="kanban-column-header">
-                    <h4>✅ Selesai</h4>
-                    <span class="kanban-count"><?= $statusCounts['completed'] ?? 0 ?></span>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </div>
 
 <div class="card">
-    <div class="card-header">
-        <h3>🚀 Aksi Cepat</h3>
-    </div>
+    <div class="card-header"><div class="card-title">🚀 Quick Actions</div></div>
     <div class="card-body">
         <div class="quick-actions">
-            <a href="/modules/transactions/" class="quick-action-btn">
-                <span class="icon">🧾</span>
-                <span>Transaksi Baru</span>
-            </a>
-            <a href="/modules/transactions/" class="quick-action-btn">
-                <span class="icon">📋</span>
-                <span>Lihat Transaksi</span>
-            </a>
-            <a href="/modules/customers/" class="quick-action-btn">
-                <span class="icon">👥</span>
-                <span>Pelanggan</span>
-            </a>
+            <a href="/modules/transactions/create.php" class="quick-action-btn"><span class="icon">🧾</span><span>Transaksi Baru</span></a>
+            <a href="/modules/customers/create.php" class="quick-action-btn"><span class="icon">👤</span><span>Pelanggan Baru</span></a>
+            <a href="/modules/transactions/" class="quick-action-btn"><span class="icon">📋</span><span>Lihat Transaksi</span></a>
+            <a href="/modules/whatsapp/" class="quick-action-btn"><span class="icon">📱</span><span>WhatsApp</span></a>
+            <a href="/modules/loyalty/" class="quick-action-btn"><span class="icon">⭐</span><span>Loyalti</span></a>
+            <a href="/modules/reports/" class="quick-action-btn"><span class="icon">📈</span><span>Laporan</span></a>
         </div>
     </div>
 </div>
