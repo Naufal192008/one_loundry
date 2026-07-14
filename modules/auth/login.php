@@ -1,14 +1,10 @@
 <?php
-// ============================================
-// modules/auth/login.php
-// ============================================
-
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/constants.php';
 require_once __DIR__ . '/../../includes/auth.php';
 
 if (isLoggedIn()) {
-    header('Location: /modules/dashboard/');
+    header('Location: /laundry_lvl1/modules/dashboard/');
     exit();
 }
 
@@ -22,11 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Username dan password wajib diisi!';
     } else {
         try {
-            /** @var PDO $db */
             $database = new Database();
             $db = $database->getConnection();
             
-            // HANYA cek username, tidak pakai email
             $stmt = $db->prepare("SELECT * FROM users WHERE username = ? AND is_active = 1 LIMIT 1");
             $stmt->execute([$username]);
             $user = $stmt->fetch();
@@ -43,14 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['role'] = $user['role'];
-                $_SESSION['franchise_id'] = $user['franchise_id'] ?? 1;
                 $_SESSION['outlet_id'] = $user['outlet_id'] ?? 1;
-                $_SESSION['theme'] = $user['theme'] ?? 'light';
                 
-                $stmt = $db->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
-                $stmt->execute([$user['id']]);
-                
-                header('Location: /modules/dashboard/');
+                header('Location: /laundry_lvl1/modules/dashboard/');
                 exit();
             } else {
                 $error = 'Username atau password salah!';
@@ -98,7 +87,7 @@ render:
             <form method="POST">
                 <div class="form-group"><label class="form-label">Username</label><input type="text" name="username" class="form-input" placeholder="Masukkan username" required autofocus></div>
                 <div class="form-group"><label class="form-label">Password</label><input type="password" name="password" class="form-input" placeholder="Masukkan password" required></div>
-                <div class="form-group" id="pinField" style="display:none;"><label class="form-label">PIN Kasir (6 digit)</label><input type="password" name="pin" class="form-input" placeholder="Masukkan PIN" maxlength="6"></div>
+                <div class="form-group" id="pinField" style="display:none;"><label class="form-label">PIN Kasir</label><input type="password" name="pin" class="form-input" placeholder="Masukkan PIN 4 digit" maxlength="4"></div>
                 <button type="submit" class="btn-login">🔐 Masuk ke Sistem</button>
             </form>
             <p style="text-align:center;margin-top:20px;font-size:12px;color:var(--gray-500);">© <?= date('Y') ?> LaundryKu. All rights reserved.</p>
