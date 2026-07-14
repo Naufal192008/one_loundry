@@ -31,7 +31,7 @@ $theme = $currentUser['theme'] ?? 'light';
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="manifest" href="/laundry_lvl1/assets/pwa/manifest.json">
     <title><?= APP_NAME ?> - <?= $pageTitle ?></title>
-    <link rel="stylesheet" href="/laundry_lvl1/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>

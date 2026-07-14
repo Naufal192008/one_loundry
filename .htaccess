@@ -1,2 +1,8 @@
 RewriteEngine On
-RewriteRule ^$ /laundry_lvl1/modules/auth/login.php [L,R=302]
+
+# Jangan redirect file/folder yang ada
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirect root ke login
+RewriteRule ^$ /modules/auth/login.php [L,R=302]

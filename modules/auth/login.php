@@ -3,7 +3,10 @@ session_start();
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/constants.php';
 
-if (isset($_SESSION['user_id'])) { header('Location: /laundry_lvl1/modules/dashboard/'); exit; }
+if (isset($_SESSION['user_id'])) {
+    header('Location: /laundry_lvl1/modules/dashboard/');
+    exit();
+}
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

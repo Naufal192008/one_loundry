@@ -7,12 +7,14 @@ function isLoggedIn(): bool {
 
 function requireLogin(): void {
     if (!isLoggedIn()) {
+        $loginUrl = '/modules/auth/login.php';
         if (!headers_sent()) {
-            header('Location: /laundry_lvl1/modules/auth/login.php');
-            exit;
+            header('Location: ' . $loginUrl);
+            exit();
+        } else {
+            echo '<script>window.location.href="' . $loginUrl . '";</script>';
+            exit();
         }
-        echo '<script>window.location.href="/laundry_lvl1/modules/auth/login.php"</script>';
-        exit;
     }
 }
 
