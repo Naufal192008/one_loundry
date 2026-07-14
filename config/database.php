@@ -8,11 +8,11 @@ class Database {
     private $conn = null;
 
     public function __construct() {
-        $this->host = getenv('DB_HOST') ?: 'localhost';
-        $this->port = getenv('DB_PORT') ?: '3306';
-        $this->db_name = getenv('DB_NAME') ?: 'laundry_db';
-        $this->username = getenv('DB_USER') ?: 'root';
-        $this->password = getenv('DB_PASS') ?: '';
+        $this->host = '127.0.0.1';  // Ganti localhost ke 127.0.0.1
+        $this->port = '3306';
+        $this->db_name = 'laundry_db';
+        $this->username = 'root';
+        $this->password = '';
     }
 
     public function getConnection() {
