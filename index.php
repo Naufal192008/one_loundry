@@ -1,5 +1,3 @@
 <?php
-// Redirect ke halaman utama
-header('Location: /modules/auth/login.php');
-exit();
-?>
+header('Location: /laundry_lvl1/modules/auth/login.php');
+exit;

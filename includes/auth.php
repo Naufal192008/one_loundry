@@ -1,81 +1,47 @@
 <?php
-// ============================================
-// includes/auth.php - Level 1
-// Fungsi autentikasi & otorisasi
-// ============================================
+session_start();
 
-/**
- * Cek apakah user sudah login
- * @return bool
- */
-function isLoggedIn() {
+function isLoggedIn(): bool {
     return isset($_SESSION['user_id']);
 }
 
-/**
- * Require login, redirect jika belum
- * @return void
- */
-function requireLogin() {
+function requireLogin(): void {
     if (!isLoggedIn()) {
         if (!headers_sent()) {
-            header('Location: /modules/auth/login.php');
-            exit();
-        } else {
-            echo '<script>window.location.href="/modules/auth/login.php";</script>';
-            exit();
+            header('Location: /laundry_lvl1/modules/auth/login.php');
+            exit;
         }
+        echo '<script>window.location.href="/laundry_lvl1/modules/auth/login.php"</script>';
+        exit;
     }
 }
 
-/**
- * Get current user data
- * @param PDO $db
- * @return array|null
- */
-function getCurrentUser(PDO $db) {
+function getCurrentUser(PDO $db): ?array {
     if (!isLoggedIn()) return null;
-    
-    $stmt = $db->prepare("SELECT * FROM users WHERE id = :id AND is_active = 1");
-    $stmt->execute([':id' => $_SESSION['user_id']]);
-    return $stmt->fetch();
+    $stmt = $db->prepare("SELECT * FROM users WHERE id = ? AND is_active = 1");
+    $stmt->execute([$_SESSION['user_id']]);
+    return $stmt->fetch() ?: null;
 }
 
-/**
- * Check user role
- * @param string $role
- * @return bool
- */
-function hasRole(string $role) {
-    return isset($_SESSION['role']) && $_SESSION['role'] === $role;
+function hasRole(string $role): bool {
+    return ($_SESSION['role'] ?? '') === $role;
 }
 
-/**
- * Check if owner
- * @return bool
- */
-function isOwner() {
-    return hasRole('owner');
-}
+function isSuperAdmin(): bool { return hasRole('super_admin'); }
+function isOwner(): bool { return hasRole('owner'); }
+function isManager(): bool { return hasRole('manager'); }
+function isAdmin(): bool { return hasRole('admin'); }
+function isCashier(): bool { return hasRole('cashier'); }
 
-/**
- * Check if cashier
- * @return bool
- */
-function isCashier() {
-    return hasRole('cashier');
+function canAccess(string $module): bool {
+    $role = $_SESSION['role'] ?? '';
+    $permissions = [
+        'super_admin' => '*',
+        'owner' => ['dashboard','transactions','customers','services','reports','inventory','drivers','pickup','whatsapp','loyalty','settings','users','api'],
+        'manager' => ['dashboard','transactions','customers','services','reports','inventory','drivers','pickup','whatsapp','loyalty'],
+        'admin' => ['dashboard','transactions','customers','services','inventory'],
+        'cashier' => ['dashboard','transactions','customers'],
+    ];
+    if ($role === 'super_admin') return true;
+    return in_array($module, $permissions[$role] ?? []);
 }
-
-/**
- * Verify cashier PIN
- * @param PDO $db
- * @param int $userId
- * @param string $pin
- * @return bool
- */
-function checkPIN(PDO $db, int $userId, string $pin) {
-    $stmt = $db->prepare("SELECT id FROM users WHERE id = :id AND pin = :pin AND role = 'cashier'");
-    $stmt->execute([':id' => $userId, ':pin' => $pin]);
-    return $stmt->fetch() ? true : false;
-}
-?>
