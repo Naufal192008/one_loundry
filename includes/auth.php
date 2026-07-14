@@ -3,33 +3,40 @@
 // includes/auth.php
 // ============================================
 
-// Session hanya dimulai jika belum aktif
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+/**
+ * @return bool
+ */
 function isLoggedIn(): bool {
     return isset($_SESSION['user_id']);
 }
 
+/**
+ * @return void
+ */
 function requireLogin(): void {
     if (!isLoggedIn()) {
-        $loginUrl = '/modules/auth/login.php';
         if (!headers_sent()) {
-            header('Location: ' . $loginUrl);
+            header('Location: /modules/auth/login.php');
             exit();
         } else {
-            echo '<script>window.location.href="' . $loginUrl . '";</script>';
+            echo '<script>window.location.href="/modules/auth/login.php";</script>';
             exit();
         }
     }
 }
 
+/**
+ * @param PDO $db
+ * @return array|null
+ */
 function getCurrentUser(PDO $db): ?array {
     if (!isLoggedIn()) return null;
-    
     try {
-        $stmt = $db->prepare("SELECT * FROM users WHERE id = ? AND is_active = 1 LIMIT 1");
+        $stmt = $db->prepare("SELECT * FROM users WHERE id = ? AND is_active = 1");
         $stmt->execute([$_SESSION['user_id']]);
         return $stmt->fetch() ?: null;
     } catch (Exception $e) {
@@ -37,20 +44,55 @@ function getCurrentUser(PDO $db): ?array {
     }
 }
 
+/**
+ * @param string $role
+ * @return bool
+ */
 function hasRole(string $role): bool {
     return ($_SESSION['role'] ?? '') === $role;
 }
 
-function isSuperAdmin(): bool { return hasRole('super_admin'); }
-function isOwner(): bool { return hasRole('owner') || hasRole('franchise_owner'); }
-function isManager(): bool { return hasRole('manager'); }
-function isAdmin(): bool { return hasRole('admin'); }
-function isCashier(): bool { return hasRole('cashier'); }
+/**
+ * @return bool
+ */
+function isSuperAdmin(): bool {
+    return hasRole('super_admin');
+}
 
+/**
+ * @return bool
+ */
+function isOwner(): bool {
+    return hasRole('owner') || hasRole('franchise_owner') || isSuperAdmin();
+}
+
+/**
+ * @return bool
+ */
+function isManager(): bool {
+    return hasRole('manager');
+}
+
+/**
+ * @return bool
+ */
+function isAdmin(): bool {
+    return hasRole('admin');
+}
+
+/**
+ * @return bool
+ */
+function isCashier(): bool {
+    return hasRole('cashier');
+}
+
+/**
+ * @param string $module
+ * @return bool
+ */
 function canAccess(string $module): bool {
-    $role = $_SESSION['role'] ?? '';
-    
-    if ($role === 'super_admin') return true;
+    if (isSuperAdmin()) return true;
     
     $permissions = [
         'owner' => ['dashboard','transactions','customers','services','reports','inventory','drivers','pickup','whatsapp','loyalty','settings','users'],
@@ -60,6 +102,6 @@ function canAccess(string $module): bool {
         'cashier' => ['dashboard','transactions','customers'],
     ];
     
-    return in_array($module, $permissions[$role] ?? []);
+    return in_array($module, $permissions[$_SESSION['role'] ?? ''] ?? []);
 }
 ?>
