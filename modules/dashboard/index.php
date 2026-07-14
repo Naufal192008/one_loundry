@@ -79,12 +79,12 @@ $custTotal = $stmt->fetch()['total'];
     <div class="card-header"><div class="card-title">🚀 Quick Actions</div></div>
     <div class="card-body">
         <div class="quick-actions">
-            <a href="/laundry_lvl1/modules/transactions/create.php" class="quick-action-btn"><span class="icon">🧾</span><span>Transaksi Baru</span></a>
-            <a href="/laundry_lvl1/modules/customers/create.php" class="quick-action-btn"><span class="icon">👤</span><span>Pelanggan Baru</span></a>
-            <a href="/laundry_lvl1/modules/transactions/" class="quick-action-btn"><span class="icon">📋</span><span>Lihat Transaksi</span></a>
-            <a href="/laundry_lvl1/modules/whatsapp/" class="quick-action-btn"><span class="icon">📱</span><span>WhatsApp</span></a>
-            <a href="/laundry_lvl1/modules/loyalty/" class="quick-action-btn"><span class="icon">⭐</span><span>Loyalti</span></a>
-            <a href="/laundry_lvl1/modules/reports/" class="quick-action-btn"><span class="icon">📈</span><span>Laporan</span></a>
+            <a href="/modules/transactions/create.php" class="quick-action-btn"><span class="icon">🧾</span><span>Transaksi Baru</span></a>
+            <a href="/modules/customers/create.php" class="quick-action-btn"><span class="icon">👤</span><span>Pelanggan Baru</span></a>
+            <a href="/modules/transactions/" class="quick-action-btn"><span class="icon">📋</span><span>Lihat Transaksi</span></a>
+            <a href="/modules/whatsapp/" class="quick-action-btn"><span class="icon">📱</span><span>WhatsApp</span></a>
+            <a href="/modules/loyalty/" class="quick-action-btn"><span class="icon">⭐</span><span>Loyalti</span></a>
+            <a href="/modules/reports/" class="quick-action-btn"><span class="icon">📈</span><span>Laporan</span></a>
         </div>
     </div>
 </div>
